@@ -1,0 +1,20 @@
+# Free DEMO evaluation only: this instance does not host a local AI model.
+# Local SQLite is ephemeral on this plan.
+# For persistent records, configure a paid disk and DATABASE_PATH yourself.
+services:
+  - type: web
+    name: reviewlens
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: AI_PROVIDER
+        value: ollama
+      - key: APP_ACCESS_KEY
+        generateValue: true
+      - key: OLLAMA_MODEL
+        value: qwen2.5:3b
+      - key: LIVE_JOBS_PER_HOUR
+        value: "10"

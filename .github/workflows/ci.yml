@@ -1,0 +1,29 @@
+name: Verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.lock
+      - run: ruff check app tests scripts
+      - run: pytest -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: node --check app/static/app.js
+      - run: docker build -t reviewlens:test .
+      - name: Container health and demo API
+        run: |
+          docker run -d --name reviewlens-test -p 8000:8000 reviewlens:test
+          python scripts/smoke.py
+      - if: always()
+        run: docker logs reviewlens-test || true
