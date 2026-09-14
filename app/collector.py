@@ -90,7 +90,8 @@ def extract_page(body: bytes) -> str:
         tag.decompose()
     content = soup.find("article") or soup.find("main") or soup.body or soup
     text = " ".join(content.stripped_strings)
-    sections.append("페이지 본문: " + text[:6500])
+    if text.strip():
+        sections.append("페이지 본문: " + text[:6500])
     return "\n".join(sections)[:10000]
 
 
@@ -110,7 +111,12 @@ async def fetch_page(url: str) -> str:
 
 def search(query: str):
     # Explicit engine, not paid search APIs. Rate limits/errors remain visible to the caller.
-    return DDGS(timeout=12).text(query, region="kr-kr", max_results=5, backend="google,brave,duckduckgo")
+    results = DDGS(timeout=12).text(query, region="kr-ko", max_results=8, backend="bing,brave,duckduckgo")
+    # Do not spend the page budget on search-engine advertising/tracking links.
+    return [item for item in results if not (
+        (urlsplit(item.get("href", "")).hostname or "").endswith("bing.com")
+        and urlsplit(item.get("href", "")).path.startswith(("/aclick", "/ck/"))
+    )][:5]
 
 
 async def collect(request, stage, settings=None):
@@ -125,7 +131,8 @@ async def collect(request, stage, settings=None):
         candidates.update(official)
     else:
         await stage("무료 웹 검색 · 다른 쇼핑몰과 사용기 탐색")
-    queries = [f'"{request.product_name}" site:{host}', f'"{request.product_name}" 구매 리뷰', f'"{request.product_name}" 사용 후기']
+    # Keep the exact query for the store, but let general search handle spacing and minor typos.
+    queries = [f'"{request.product_name}" site:{host}', f'{request.product_name} 구매 리뷰', f'{request.product_name} 사용 후기']
     for query in ([] if settings is not None and settings.use_naver else queries):
         try:
             results = await asyncio.wait_for(asyncio.to_thread(search, query), timeout=20)
@@ -143,9 +150,11 @@ async def collect(request, stage, settings=None):
         has_page = False
         content = candidate["body"] if candidate.get("api_kind") else (
             "검색 발췌(전체 본문 아님): " + candidate["body"] if candidate["body"] else "")
-        if index < 5:
+        if index < 10:
             try:
                 page = await asyncio.wait_for(fetch_page(url), timeout=25)
+                if not page.strip():
+                    raise ValueError("Empty page")
                 content += "\n" + page
                 has_page = True
             except Exception:
@@ -156,4 +165,6 @@ async def collect(request, stage, settings=None):
         sources.append(source)
         records.append({"source_id": source.id, "title": source.title, "url": url, "text": content[:10000],
                         "api_kind": candidate.get("api_kind"), "has_page": has_page})
+    # Spend the limited AI extraction budget on substantive source pages before short snippets.
+    records.sort(key=lambda record: (not record["has_page"], -len(record["text"])))
     return sources, records, list(dict.fromkeys(limitations))

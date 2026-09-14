@@ -18,6 +18,7 @@ Ollama는 모델과 실행 파일을 위해 수 GB의 디스크 공간을 사용
 
 ```dotenv
 AI_PROVIDER=ollama
+SEARCH_PROVIDER=ddgs
 OLLAMA_BASE_URL=http://127.0.0.1:11434
 OLLAMA_MODEL=qwen2.5:3b
 JOB_TIMEOUT_SECONDS=600
@@ -28,6 +29,8 @@ OPENAI_API_KEY=
 5. 웹 화면을 새로고침하고 ‘로컬 AI 준비됨’ 표시를 확인한 뒤 상품을 분석합니다.
 
 ## 실제 동작
+
+현재는 Ollama와 DDGS를 사용합니다. 검증이 끝나더라도 그대로 유지하며, 사용자가 명시적으로 변경을 요청했을 때만 OpenAI로 전환합니다. 전환 시에는 `AI_PROVIDER=openai`와 `OPENAI_API_KEY`를 설정하고 서버를 재시작합니다. `SEARCH_PROVIDER=ddgs`를 유지하면 검색은 기존 코드가 담당하고 OpenAI는 수집된 자료의 추출·요약만 수행합니다. 모델 변경 후에는 상품 일치·발췌·별점 처리와 실제 토큰 비용을 다시 검증해야 합니다. 자동 유료 전환은 하지 않습니다.
 
 - DDGS가 공개 검색 엔진에 상품명 검색어를 보냅니다. 별도 유료 검색 API 키는 사용하지 않습니다.
 - 입력 구매 링크와 검색된 공개 페이지를 제한된 범위에서 읽습니다.

@@ -71,8 +71,13 @@ def build_report(request, sources, evidence, narrative, limitations, excluded, m
     used = {e.source_id for e in evidence}
     limitations = list(dict.fromkeys(limitations))
     if not evidence:
+        summary = (
+            "검색과 구매 페이지에서 분석 자료를 가져오지 못했습니다. 검색 서비스 제한이나 페이지 접근 제한이 원인일 수 있습니다. 아래 수집 결과를 확인해 주세요."
+            if not sources else
+            "자료는 찾았지만 상품 일치·원문 발췌 검증을 통과한 근거가 없습니다. AI 추출 실패 또는 자료 부족일 수 있으며, 입력 오류를 의미하지는 않습니다. 아래 제외 사유를 확인해 주세요."
+        )
         narrative = Narrative(
-            headline="분석할 수 있는 근거를 충분히 찾지 못했습니다", summary="상품 모델명과 구매 링크를 확인한 뒤 다시 시도해 주세요.",
+            headline="분석할 수 있는 근거를 충분히 찾지 못했습니다", summary=summary,
             pros=[], cons=[], usage=[], suitable_for=[], consider_before_buying=[])
     result = {
         "product_name": request.product_name, "product_url": request.product_url,

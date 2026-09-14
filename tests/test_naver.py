@@ -94,7 +94,7 @@ def test_official_collection_never_uses_ddgs_and_labels_snippets(monkeypatch):
     assert "API 한계" in limitations
 
 
-@pytest.mark.parametrize("kind", ["blog", "webkr"])
+@pytest.mark.parametrize("kind", ["blog", "webkr", None])
 @pytest.mark.parametrize("has_page", [False, True])
 def test_official_openai_route_no_search_tools_and_snippet_cannot_be_review(monkeypatch, kind, has_page):
     calls = []
