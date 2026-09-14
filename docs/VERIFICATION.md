@@ -6,7 +6,7 @@
 
 - Python 3.12 가상환경과 버전 고정 의존성 설치
 - 로컬 Uvicorn 서버 정상 시작 및 `/healthz` 응답
-- API·계산·검증·로컬/선택형 외부 공급자 모의 테스트 31개 통과
+- API·계산·검증·로컬/선택형 외부 공급자·API HUB 모의 테스트 42개 통과
 - Ruff 검사, JavaScript 구문 검사, pip 의존성 검사 통과
 - 브라우저에서 예제 생성, 진행 상태, 결과 확인
 - 로컬 AI를 기본으로 설정, OpenAI 유료 자동 전환 없음
@@ -22,6 +22,8 @@
   - 실행 증빙: https://github.com/Pormer/review-lens/actions/runs/34797375952
 
 ## 아직 외부 확인이 필요한 항목
+
+- NAVER API HUB 블로그·웹문서 API 어댑터 구현 및 모의 검증 완료. 종료된 쇼핑 검색 API 제외. 실제 발급 키로 호출·상품 분석 검증 필요: [설정 안내](OFFICIAL_APIS.md)
 
 - Ollama 설치 및 실제 로컬 모델을 사용하는 상품 분석과 출처 검토
 - 사용자의 비용 선호에 따라 유료 OpenAI 호출은 수행하지 않음

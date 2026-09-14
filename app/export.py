@@ -25,7 +25,7 @@ def markdown_report(report: dict) -> str:
     for field, label in (("suitable_for", "이런 분께 적합해요"), ("consider_before_buying", "구매 전 확인")):
         lines += [f"## {label}", ""] + [f"- {clean(x)}" for x in n[field]] + [""]
     lines += ["## 분석의 한계", ""] + [f"- {clean(x)}" for x in report["limitations"]] + ["", "## 근거", ""]
-    passage_label = "수집 자료 발췌" if report.get("provider") == "ollama" else "연구 메모 발췌"
+    passage_label = "수집 자료 발췌" if report.get("provider") == "ollama" or report.get("evidence_origin") == "collected" else "연구 메모 발췌"
     for item in report["evidence"]:
         lines += [f"- {clean(item['id'])} / {clean(item['source_id'])}: {clean(item['summary'])}",
                   f"  {passage_label}: {clean(item['passage'])}"]

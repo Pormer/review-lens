@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_model: str = "gpt-5-mini"
     ai_provider: Literal["ollama", "openai"] = "ollama"
+    search_provider: Literal["auto", "naver", "ddgs"] = "auto"
+    naver_client_id: str = ""
+    naver_client_secret: str = ""
     ollama_base_url: str = "http://127.0.0.1:11434"
     ollama_model: str = "qwen2.5:3b"
     app_access_key: str = ""
@@ -19,6 +22,12 @@ class Settings(BaseSettings):
     max_pending_jobs: int = Field(default=8, ge=1, le=50)
     live_jobs_per_hour: int = Field(default=10, ge=1, le=1000)
     retention_days: int = Field(default=7, ge=1, le=90)
+
+    @property
+    def use_naver(self) -> bool:
+        return self.search_provider == "naver" or (
+            self.search_provider == "auto" and bool(self.naver_client_id or self.naver_client_secret)
+        )
 
     @property
     def live_enabled(self) -> bool:

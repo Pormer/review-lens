@@ -113,13 +113,20 @@ def search(query: str):
     return DDGS(timeout=12).text(query, region="kr-kr", max_results=5, backend="google,brave,duckduckgo")
 
 
-async def collect(request, stage):
+async def collect(request, stage, settings=None):
     host = urlsplit(request.product_url).hostname
     candidates = {request.product_url: {"title": request.product_name + " · 입력 구매 링크", "body": ""}}
     limitations = []
-    await stage("무료 웹 검색 · 다른 쇼핑몰과 사용기 탐색")
+    if settings is not None and settings.use_naver:
+        from app.naver import candidates as naver_candidates
+
+        await stage("NAVER API HUB · 블로그·웹문서 검색")
+        official, limitations = await naver_candidates(settings, request.product_name)
+        candidates.update(official)
+    else:
+        await stage("무료 웹 검색 · 다른 쇼핑몰과 사용기 탐색")
     queries = [f'"{request.product_name}" site:{host}', f'"{request.product_name}" 구매 리뷰', f'"{request.product_name}" 사용 후기']
-    for query in queries:
+    for query in ([] if settings is not None and settings.use_naver else queries):
         try:
             results = await asyncio.wait_for(asyncio.to_thread(search, query), timeout=20)
             for item in results:
@@ -133,16 +140,20 @@ async def collect(request, stage):
     sources, records = [], []
     await stage("공개 페이지 수집 · 접근 정책과 출처 확인")
     for index, (url, candidate) in enumerate(list(candidates.items())[:10]):
-        content = "검색 발췌(전체 본문 아님): " + candidate["body"] if candidate["body"] else ""
+        has_page = False
+        content = candidate["body"] if candidate.get("api_kind") else (
+            "검색 발췌(전체 본문 아님): " + candidate["body"] if candidate["body"] else "")
         if index < 5:
             try:
                 page = await asyncio.wait_for(fetch_page(url), timeout=25)
                 content += "\n" + page
+                has_page = True
             except Exception:
                 limitations.append(f"{urlsplit(url).hostname}: 페이지 접근 또는 수집이 제한되어 원문을 확보하지 못했습니다.")
         if not content.strip():
             continue
         source = Source(id=f"s{len(sources)+1}", title=candidate["title"], url=url)
         sources.append(source)
-        records.append({"source_id": source.id, "title": source.title, "url": url, "text": content[:10000]})
+        records.append({"source_id": source.id, "title": source.title, "url": url, "text": content[:10000],
+                        "api_kind": candidate.get("api_kind"), "has_page": has_page})
     return sources, records, list(dict.fromkeys(limitations))

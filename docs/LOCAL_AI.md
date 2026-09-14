@@ -41,6 +41,8 @@ OPENAI_API_KEY=
 
 ## Docker에서 호스트 PC의 Ollama 연결
 
+공식 검색으로 대체하려면 [네이버 API 설정](OFFICIAL_APIS.md)에 따라 `SEARCH_PROVIDER=naver`와 네이버 키를 설정합니다. Ollama는 검색하지 않고 수집된 자료의 의미 분석을 담당합니다.
+
 Windows/macOS Docker Desktop은 다음 주소를 사용할 수 있습니다.
 
 ```dotenv

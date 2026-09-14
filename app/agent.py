@@ -104,7 +104,7 @@ async def run_openai(request, settings, stage):
 
 
 async def run_live(request, settings, stage):
-    if settings.ai_provider == "ollama":
+    if settings.ai_provider == "ollama" or settings.use_naver or settings.search_provider == "ddgs":
         from app.local_agent import run_local
 
         return await run_local(request, settings, stage)

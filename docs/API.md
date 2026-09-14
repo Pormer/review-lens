@@ -39,6 +39,10 @@ curl http://localhost:8000/api/analyses/JOB_ID -H 'X-Access-Key: YOUR_SERVICE_AC
 | `discovered_sources` | 검색 응답이 인용한 전체 후보 출처. 채택 근거가 아닐 수도 있음 |
 | `limitations` | 분석 범위와 불확실성 |
 | `excluded_count` | 중복·상품 불일치·검증 실패로 제외된 근거 수 |
+| `collection_provider` | 코드 수집 경로에서 `naver` 또는 `ddgs` |
+| `evidence_origin` | `collected`이면 AI 제공자와 관계없이 API·검색·공개 페이지의 수집 자료 발췌 |
+
+네이버 공식 API 설정과 제공 범위는 [공식 API 안내](OFFICIAL_APIS.md)를 참고합니다. `/api/config`에는 실제 선택된 `search_provider`만 공개하며 네이버 키는 노출하지 않습니다.
 
 ## 내보내기와 삭제
 

@@ -63,6 +63,8 @@ def create_app(settings: Settings | None = None, live_runner=run_live) -> FastAP
                         message = "분석 시간이 초과되었거나 외부 서비스에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요."
                     elif str(exc) == "local_model_unavailable":
                         message = "로컬 AI에 연결하지 못했습니다. Ollama를 실행하고 설정한 모델을 내려받아 주세요."
+                    elif str(exc) == "naver_credentials_missing":
+                        message = "네이버 공식 검색에는 NAVER_CLIENT_ID와 NAVER_CLIENT_SECRET이 모두 필요합니다."
                     else:
                         message = "충분한 출처를 확보하지 못했거나 분석 응답을 검증하지 못했습니다. 상품명·링크와 서버 설정을 확인해 주세요."
                     store.update(job_id, status="failed", stage="분석 실패", error=message)
@@ -102,7 +104,10 @@ def create_app(settings: Settings | None = None, live_runner=run_live) -> FastAP
     @app.get("/api/config")
     async def config():
         ready = settings.live_enabled and (settings.ai_provider == "openai" or await local_ready(settings))
+        if settings.use_naver and not (settings.naver_client_id and settings.naver_client_secret):
+            ready = False
         return {"live_enabled": ready, "provider": settings.ai_provider, "model": settings.ollama_model if settings.ai_provider == "ollama" else settings.openai_model,
+                "search_provider": "naver" if settings.use_naver else ("openai_web" if settings.ai_provider == "openai" and settings.search_provider == "auto" else "ddgs"),
                 "access_key_required": bool(settings.app_access_key),
                 "demo_product": {"product_name": DEMO_NAME, "product_url": DEMO_URL},
                 "retention_days": settings.retention_days}
@@ -111,6 +116,8 @@ def create_app(settings: Settings | None = None, live_runner=run_live) -> FastAP
     async def create_analysis(payload: AnalysisRequest):
         store = app.state.store
         store.cleanup(settings.retention_days)
+        if payload.mode == "live" and settings.use_naver and not (settings.naver_client_id and settings.naver_client_secret):
+            raise HTTPException(503, "네이버 공식 검색에는 NAVER_CLIENT_ID와 NAVER_CLIENT_SECRET이 모두 필요합니다.")
         if payload.mode == "live" and not settings.live_enabled:
             raise HTTPException(503, "분석 제공자 설정을 확인해 주세요. OpenAI 선택 시 OPENAI_API_KEY가 필요하며, 운영 환경에서는 24자 이상의 APP_ACCESS_KEY도 필요합니다.")
         if payload.mode == "live" and settings.ai_provider == "ollama" and not await local_ready(settings):
