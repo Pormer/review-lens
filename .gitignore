@@ -11,3 +11,4 @@ data/
 *.zip
 node_modules/
 test-results/
+pytest-cache-files-*/

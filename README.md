@@ -1,5 +1,7 @@
 # 리뷰렌즈 · Review Lens
 
+[![Verify](https://github.com/Pormer/review-lens/actions/workflows/ci.yml/badge.svg)](https://github.com/Pormer/review-lens/actions/workflows/ci.yml)
+
 **상품명과 구매 링크 하나로, 별점 너머의 이야기를 읽는 리뷰 분석 Agent.**
 
 FastAPI 서버가 무료 웹 검색으로 동일 상품의 정보·리뷰·사용기를 탐색하고, **PC에서 실행하는 Ollama 로컬 AI**가 한국어 리포트로 정리합니다. 기본 모드는 API 키와 호출당 요금이 없습니다. 각 장단점에서 근거와 원래 출처로 이동할 수 있습니다.
