@@ -16,6 +16,7 @@
 - 실행 중인 서버의 헬스 체크 → 예제 생성 → 표본 검증 → 내보내기 → 삭제 스모크 테스트 통과
 - 1280px 데스크톱과 약 607px 좁은 화면에서 입력/리포트 화면 확인
 - GitHub 공개 저장소 업로드 완료: https://github.com/Pormer/review-lens
+- 티스토리 개발 후기 공개 발행 완료: https://pormer.tistory.com/6
 - GitHub Actions에서 Linux 테스트와 Docker 이미지 빌드·컨테이너 실행·스모크 테스트 성공
   - 검증 코드: `6b7fa72`
   - 실행 증빙: https://github.com/Pormer/review-lens/actions/runs/34797375952
@@ -26,7 +27,6 @@
 - 사용자의 비용 선호에 따라 유료 OpenAI 호출은 수행하지 않음
 - 로컬 PC에는 Docker가 없어 원격 GitHub Actions의 Linux 컨테이너로 실행 검증함
 - 공개 호스팅 배포: 계정 및 서비스 생성 필요
-- 티스토리 게시: 로그인 확인, 작성 중
 
 ## 사용자 요구사항 대응
 
@@ -34,7 +34,7 @@
 | --- | --- | --- |
 | 정상 배포·실행, 디버깅, 다듬어진 결과 | 로컬 실행·자동 테스트 완료, 실제 모델·공개 배포 미확인 | 코드, 테스트, 화면 |
 | 개발 과정·설치·코드·트러블슈팅 문서 | 작성 완료 | README와 docs |
-| 개발 블로그 또는 SNS 게시 | 글 준비, 발행 대기 | BLOG_POST.md |
+| 개발 블로그 또는 SNS 게시 | 티스토리 공개 발행 완료 | https://pormer.tistory.com/6 |
 | 공유 가능한 GitHub 정리·업로드 | 공개 업로드·CI 성공 | Pormer/review-lens |
 
 ## 알려진 범위
