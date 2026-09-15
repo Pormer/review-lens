@@ -51,11 +51,11 @@ AI 분석은 일반 웹 요청보다 오래 걸린다. 요청을 받으면 작�
 소스와 설치법은 [GitHub: Pormer/review-lens](https://github.com/Pormer/review-lens)에 정리했다. Python 3.12 환경에서 의존성을 설치하고 FastAPI를 실행한 뒤, 브라우저에서 예제 리포트를 먼저 볼 수 있다.
 
 ```powershell
-Set-Location -LiteralPath '..\Review_Service'
+# 프로젝트 폴더(예: …\Review_Service)로 이동한 뒤 실행
 & '.\.venv\Scripts\python.exe' -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --no-proxy-headers
 ```
 
-현재 PC에는 Ollama와 `qwen2.5:3b` 모델이 설치되어 있어 유료 API 키 없이 실행할 수 있다. PC를 다시 켠 뒤에는 Ollama와 위 서버 명령을 실행하고 `http://127.0.0.1:8000`을 연다. 이 주소는 현재 PC에서만 접속할 수 있다. 자세한 과정은 [로컬 사용 안내](https://github.com/Pormer/review-lens/blob/main/docs/LOCAL_USE.md)에 정리했다. OpenAI API는 자동으로 사용되지 않으며, 추후 직접 요청할 때만 전환한다.
+Ollama와 `qwen2.5:3b` 모델을 설치하면 유료 API 키 없이 실행할 수 있다. PC를 다시 켠 뒤에는 Ollama와 위 서버 명령을 실행하고 `http://127.0.0.1:8000`을 연다. 이 주소는 서버를 실행하는 PC에서만 접속할 수 있다. 자세한 과정은 [로컬 사용 안내](https://github.com/Pormer/review-lens/blob/main/docs/LOCAL_USE.md)에 정리했다. OpenAI API는 자동으로 사용되지 않으며, 추후 직접 선택할 때만 전환한다.
 
 ## 앞으로 개선하고 싶은 것
 
